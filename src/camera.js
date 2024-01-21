@@ -1,50 +1,62 @@
 import { Camera } from 'expo-camera';
 import { useState, useEffect } from 'react';
-import { Text, View } from 'react-native';
-import { Button } from '@rneui/themed';
+import { StyleSheet, View, Dimensions } from 'react-native';
+import { SvgXml } from 'react-native-svg';
+import closeMarkup from './image-sources/close';
+import shutterMarkup from './image-sources/shutter';
 
-const CameraComponent = () => {
-	// const [hasPermission, setHasPermission] = Camera.useCameraPermissions();
-	// const [cameraOpen, setCameraOpen] = useState(false);
-
-	// useEffect(() => {
-	// 	(async () => {
-	// 		const { status } = await Camera.requestCameraPermissionsAsync();
-	// 		setHasPermission(status === 'granted');
-	// 	})();
-	// }, []);
-
-	// if (hasPermission === null) {
-	// 	return <View />;
-	// }
-	// if (hasPermission === false) {
-	// 	return <Text>No access to camera</Text>;
-	// }
+const CameraComponent = ({ setCameraOpen }) => {
 	const [permission, setPermission] = Camera.useCameraPermissions();
-	const [cameraOpen, setCameraOpen] = useState(false);
 
-	const onCLick = async () => {
-		if (!permission.granted) {
-			await Camera.requestCameraPermissionsAsync();
-		} else {
-			setCameraOpen(true);
-		}
-	};
+	useEffect(() => {
+		(async () => {
+			const { status } = await Camera.requestCameraPermissionsAsync();
+		})();
+	});
 
 	return (
-		<View>
-			{cameraOpen && <Camera style={{ width: 200, height: 200 }} />}
-			<Button
-				title='Open Camera'
-				buttonStyle={{ backgroundColor: 'rgba(39, 39, 39, 1)' }}
-				onPress={onCLick}
-				containerStyle={{
-					width: 200,
+		<View style={styles.background}>
+			<SvgXml
+				xml={closeMarkup}
+				style={styles.close}
+				onPress={() => {
+					setCameraOpen(false);
 				}}
-				titleStyle={{ color: 'white', marginHorizontal: 20 }}
 			/>
+			<Camera style={styles.camera} />
+			<SvgXml xml={shutterMarkup} style={styles.shutter} />
 		</View>
 	);
 };
+
+const styles = StyleSheet.create({
+	camera: {
+		flex: 1,
+		aspectRatio: 9 / 16,
+	},
+	close: {
+		position: 'absolute',
+		top: 40,
+		left: 20,
+		zIndex: 1,
+		padding: 10,
+	},
+	shutter: {
+		position: 'absolute',
+		bottom: 40,
+	},
+	background: {
+		flex: 1,
+		flexDirection: 'column',
+		justifyContent: 'center',
+		alignItems: 'center',
+		position: 'absolute',
+		height: Dimensions.get('screen').height,
+		width: Dimensions.get('screen').width,
+		backgroundColor: 'black',
+		opacity: 1,
+		zIndex: 0,
+	},
+});
 
 export default CameraComponent;

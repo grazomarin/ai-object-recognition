@@ -1,29 +1,54 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Button } from '@rneui/base';
 import CameraComponent from './src/camera';
 import Title from './src/title';
+import constants from './src/styles/style';
 
 export default function App() {
+	const styles = StyleSheet.create({
+		homescreen: {
+			flex: 1,
+			flexDirection: 'column',
+			alignItems: 'center',
+			justifyContent: 'space-between',
+			backgroundColor: 'black',
+			paddingVertical: constants.vPadding,
+			paddingHorizontal: constants.hPadding,
+		},
+		title: {
+			alignSelf: 'flex-start',
+		},
+	});
+
+	const [cameraOpen, setCameraOpen] = useState(false);
+	const onCLick = () => {
+		setCameraOpen(true);
+	};
+
 	return (
 		<>
 			<View style={styles.homescreen}>
-				<Title text='Clozify' />
-				<Text>Open up App.js to start working on your app!</Text>
-				<CameraComponent />
+				<Title text='Clozify' css={styles.title} />
+				<Text style={{ color: 'white' }}>
+					Open up App.js to start working on your app!
+				</Text>
+				<Button
+					title='Open Camera'
+					buttonStyle={{ backgroundColor: 'rgba(39, 39, 39, 1)' }}
+					onPress={onCLick}
+					containerStyle={{
+						width: 200,
+					}}
+					titleStyle={{ color: 'white', marginHorizontal: 20 }}
+				/>
+				{cameraOpen && <CameraComponent setCameraOpen={setCameraOpen} />}
 			</View>
 			<StatusBar style='auto' />
 		</>
 	);
 }
-
-const styles = StyleSheet.create({
-	homescreen: {
-		flex: 1,
-		backgroundColor: 'black',
-		paddingVertical: 48,
-		paddingHorizontal: 24,
-	},
-});
 
 // const styles = StyleSheet.create({
 //   container: {
